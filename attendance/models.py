@@ -8,6 +8,7 @@ class Attendance(models.Model):
         ('Present', 'Present'),
         ('Leave', 'Leave'),
         ('WFH', 'Work From Home'),
+        ('Absent', 'Absent'),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
