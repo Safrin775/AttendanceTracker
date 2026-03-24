@@ -39,11 +39,11 @@ function Dashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Try to get attendance records
+      
       const attendanceRes = await attendanceAPI.getMyAttendance();
       setRecords(attendanceRes.data);
       
-      // Try to get today's attendance (might 404 if no record)
+      
       try {
         const todayRes = await attendanceAPI.getTodayAttendance();
         setTodayAttendance(todayRes.data);
@@ -72,7 +72,7 @@ function Dashboard() {
     try {
       const response = await attendanceAPI.markAttendance();
       showMessage('success', response.data.message);
-      fetchData(); // Refresh data
+      fetchData(); 
     } catch (error) {
       showMessage('error', error.response?.data?.error || 'Failed to mark attendance');
     }

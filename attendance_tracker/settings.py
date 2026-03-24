@@ -64,14 +64,28 @@ TEMPLATES = [
 WSGI_APPLICATION = 'attendance_tracker.wsgi.application'
 
 # Database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'attendance_db',           
+        'USER': 'root',                     
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),        
+        'HOST': '127.0.0.1',               
+        'PORT': '3306',                     
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
-# Password validation
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -87,13 +101,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+
 STATIC_URL = 'static/'
 
 # Default primary key field type
@@ -102,7 +116,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = '/attendance/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
-# ============ CORS SETTINGS ============
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -110,7 +123,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
-# ============ REST FRAMEWORK SETTINGS ============
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
@@ -121,16 +134,16 @@ REST_FRAMEWORK = {
     ]
 }
 
-# ============ CSRF SETTINGS (CRITICAL FOR REACT) ============
+
 CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript to read CSRF token
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
-CSRF_COOKIE_SECURE = False  # Set to True in production with HTTPS
+CSRF_COOKIE_SECURE = False  
 
-# ============ SESSION SETTINGS ============
+
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_COOKIE_SECURE = False
 SESSION_COOKIE_HTTPONLY = True

@@ -10,13 +10,12 @@ class AttendanceRequestAdmin(admin.ModelAdmin):
     actions = ['approve_requests', 'reject_requests']
     
     def approve_requests(self, request, queryset):
-        """Bulk approve requests"""
+        
         for obj in queryset:
             if obj.status == 'Pending':
                 obj.status = 'Approved'
                 obj.save()
                 
-                # Create attendance records for approved request
                 current = obj.from_date
                 while current <= obj.to_date:
                     Attendance.objects.get_or_create(
@@ -30,7 +29,7 @@ class AttendanceRequestAdmin(admin.ModelAdmin):
     approve_requests.short_description = "Approve selected requests"
     
     def reject_requests(self, request, queryset):
-        """Bulk reject requests"""
+        
         for obj in queryset:
             if obj.status == 'Pending':
                 obj.status = 'Rejected'
@@ -40,7 +39,7 @@ class AttendanceRequestAdmin(admin.ModelAdmin):
     reject_requests.short_description = "Reject selected requests"
     
     def save_model(self, request, obj, form, change):
-        """Handle status changes when saving individual request"""
+        
         previous = None
         
         if change:
@@ -48,7 +47,7 @@ class AttendanceRequestAdmin(admin.ModelAdmin):
         
         super().save_model(request, obj, form, change)
         
-        # Handle approval
+       
         if obj.status == "Approved":
             current = obj.from_date
             while current <= obj.to_date:
@@ -59,7 +58,7 @@ class AttendanceRequestAdmin(admin.ModelAdmin):
                 )
                 current += timedelta(days=1)
         
-        # Handle rejection of previously approved request
+        
         if previous and previous.status == "Approved" and obj.status == "Rejected":
             current = obj.from_date
             while current <= obj.to_date:

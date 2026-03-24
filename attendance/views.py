@@ -13,7 +13,6 @@ from .serializers import (
 )
 
 
-# ============ CSRF ENDPOINT ============
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def get_csrf_token(request):
@@ -22,7 +21,6 @@ def get_csrf_token(request):
     return Response({'csrfToken': csrf_token})
 
 
-# ============ AUTHENTICATION VIEWS ============
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def user_login(request):
@@ -39,7 +37,7 @@ def user_login(request):
     user = authenticate(username=username, password=password)
     
     if user:
-        login(request, user)  # Creates session
+        login(request, user)  
         serializer = UserSerializer(user)
         return Response({
             'success': True,
@@ -107,7 +105,6 @@ def user_register(request):
     })
 
 
-# ============ ATTENDANCE VIEWS ============
 class AttendanceViewSet(viewsets.ModelViewSet):
     """ViewSet for Attendance model"""
     serializer_class = AttendanceSerializer
@@ -144,7 +141,6 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         today = date.today()
         current_time = datetime.now().time()
         
-        # Check if user has approved leave/WFH for today
         has_request = AttendanceRequest.objects.filter(
             user=request.user,
             from_date__lte=today,
@@ -158,14 +154,14 @@ class AttendanceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        # Get or create attendance record
+        
         attendance, created = Attendance.objects.get_or_create(
             user=request.user,
             date=today,
             defaults={'status': 'Present'}
         )
         
-        # Handle check-in/check-out
+       
         if not attendance.in_time:
             attendance.in_time = current_time
             message = "Check-in recorded successfully"
@@ -186,7 +182,6 @@ class AttendanceViewSet(viewsets.ModelViewSet):
         })
 
 
-# ============ ATTENDANCE REQUEST VIEWS ============
 class AttendanceRequestViewSet(viewsets.ModelViewSet):
     """ViewSet for AttendanceRequest model"""
     permission_classes = [IsAuthenticated]
@@ -226,8 +221,6 @@ class AttendanceRequestViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(rejected, many=True)
         return Response(serializer.data)
 
-
-# ============ ADMIN VIEWS ============
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def run_daily_absent_marking(request):
